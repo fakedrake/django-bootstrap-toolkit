@@ -13,8 +13,16 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
 
+JQUERY_BASE_URL = getattr(settings, 'JQUERY_BASE_URL',
+                             '/static/jquery/'
+)
+
+JQUERY_URL = getattr(settings, 'JQUERY_URL',
+                           None
+)
+
 BOOTSTRAP_BASE_URL = getattr(settings, 'BOOTSTRAP_BASE_URL',
-                             '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/'
+                             '/static/bootstrap_toolkit/bootstrap/'
 )
 
 BOOTSTRAP_JS_BASE_URL = getattr(settings, 'BOOTSTRAP_JS_BASE_URL',
@@ -69,6 +77,18 @@ def bootstrap_javascript_url(name=None):
     else:
         return BOOTSTRAP_JS_BASE_URL + 'bootstrap.min.js'
 
+@register.simple_tag
+def bootstrap_jquery_url(name=None):
+    """
+    URL to JQuery javascript file
+    """
+    if JQUERY_URL:
+        return JQUERY_URL
+    if name:
+        return JQUERY_BASE_URL + 'jquery-' + name + '.min.js'
+    else:
+        return JQUERY_BASE_URL + 'jquery.min.js'
+
 
 @register.simple_tag
 def bootstrap_javascript_tag(name=None):
@@ -79,6 +99,18 @@ def bootstrap_javascript_tag(name=None):
     if url:
         return u'<script src="%s"></script>' % url
     return u''
+
+
+@register.simple_tag
+def bootstrap_jquery_tag(name=None):
+    """
+    HTML tag to insert jquery javascript file
+    """
+    url = bootstrap_jquery_url(name)
+    if url:
+        return u'<script src="%s"></script>' % url
+    return u''
+
 
 
 @register.filter
